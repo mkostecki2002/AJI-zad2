@@ -78,12 +78,12 @@ let addTodo = function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   // initList();
-
   let req = new XMLHttpRequest();
 
   req.onreadystatechange = () => {
     if (req.readyState == XMLHttpRequest.DONE) {
-      console.log(req.responseText);
+      todoList = JSON.parse(req.responseText).record;
+      console.log(todoList);
     }
   };
 
@@ -94,9 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   req.send();
 
-  if (req.readyState == XMLHttpRequest.DONE) {
-    console.log(req.responseText);
-  }
   updateTodoList();
 });
 
