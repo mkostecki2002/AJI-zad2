@@ -1,25 +1,21 @@
 let todoList = [];
 
 let initList = function () {
-  let savedList = window.localStorage.getItem("todos");
-  if (savedList != null) todoList = JSON.parse(savedList);
-  else
-    todoList.push(
-      {
-        title: "Learn JS",
-        description: "Create a demo application for my TODO's",
-        place: "445",
-        category: "",
-        dueDate: new Date(2024, 10, 16),
-      },
-      {
-        title: "Lecture test",
-        description: "Quick test from the first three lectures",
-        place: "F6",
-        category: "",
-        dueDate: new Date(2024, 10, 17),
-      }
-    );
+  let req = new XMLHttpRequest();
+
+  req.onreadystatechange = () => {
+    if (req.readyState == XMLHttpRequest.DONE) {
+      todoList = JSON.parse(req.responseText).record;
+      updateTodoList();
+    }
+  };
+
+  req.open("GET", "https://api.jsonbin.io/v3/b/68f7b2c8ae596e708f21fd9b", true);
+  req.setRequestHeader(
+    "X-Master-Key",
+    "$2a$10$tUMLX607puUKjRYwk.faoOgt0laACW2FmXHJk6znqyjphstAicBv."
+  );
+  req.send();
 };
 
 let updateTodoList = function () {
@@ -30,24 +26,27 @@ let updateTodoList = function () {
     }
   }
 
+  console.log(todoList);
+
   let filterInput = document.getElementById("inputSearch");
   if (filterInput != null) {
     for (let todo in todoList) {
-      if (
-        todoList[todo].title
-          .toLowerCase()
-          .includes(filterInput.value.toLowerCase()) ||
-        todoList[todo].description
-          .toLowerCase()
-          .includes(filterInput.value.toLowerCase())
-      ) {
-        let newElement = document.createElement("p");
-        let newContent = document.createTextNode(
-          todoList[todo].title + " " + todoList[todo].description
-        );
-        newElement.appendChild(newContent);
-        todoListDiv.appendChild(newElement);
-      }
+      if (todoList[todo].title && todoList[todo].description)
+        if (
+          todoList[todo].title
+            .toLowerCase()
+            .includes(filterInput.value.toLowerCase()) ||
+          todoList[todo].description
+            .toLowerCase()
+            .includes(filterInput.value.toLowerCase())
+        ) {
+          let newElement = document.createElement("p");
+          let newContent = document.createTextNode(
+            todoList[todo].title + " " + todoList[todo].description
+          );
+          newElement.appendChild(newContent);
+          todoListDiv.appendChild(newElement);
+        }
     }
   }
 };
@@ -73,28 +72,32 @@ let addTodo = function () {
   };
   //add item to the list
   todoList.push(newTodo);
+  updateJSONbin();
+  updateTodoList();
+  //store the updated list in local storage
   window.localStorage.setItem("todos", JSON.stringify(todoList));
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  // initList();
+let updateJSONbin = function () {
   let req = new XMLHttpRequest();
 
   req.onreadystatechange = () => {
     if (req.readyState == XMLHttpRequest.DONE) {
-      todoList = JSON.parse(req.responseText).record;
-      console.log(todoList);
+      console.log(req.responseText);
     }
   };
 
-  req.open("GET", "https://api.jsonbin.io/v3/b/68f7b2c8ae596e708f21fd9b", true);
+  req.open("PUT", "https://api.jsonbin.io/v3/b/68f7b2c8ae596e708f21fd9b", true);
+  req.setRequestHeader("Content-Type", "application/json");
   req.setRequestHeader(
     "X-Master-Key",
     "$2a$10$tUMLX607puUKjRYwk.faoOgt0laACW2FmXHJk6znqyjphstAicBv."
   );
-  req.send();
+  req.send(JSON.stringify(todoList));
+};
 
-  updateTodoList();
+document.addEventListener("DOMContentLoaded", () => {
+  initList();
 });
 
 let inputSearch = document.getElementById("inputSearch");
