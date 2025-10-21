@@ -77,7 +77,26 @@ let addTodo = function () {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  initList();
+  // initList();
+
+  let req = new XMLHttpRequest();
+
+  req.onreadystatechange = () => {
+    if (req.readyState == XMLHttpRequest.DONE) {
+      console.log(req.responseText);
+    }
+  };
+
+  req.open("GET", "https://api.jsonbin.io/v3/b/68f7b2c8ae596e708f21fd9b", true);
+  req.setRequestHeader(
+    "X-Master-Key",
+    "$2a$10$tUMLX607puUKjRYwk.faoOgt0laACW2FmXHJk6znqyjphstAicBv."
+  );
+  req.send();
+
+  if (req.readyState == XMLHttpRequest.DONE) {
+    console.log(req.responseText);
+  }
   updateTodoList();
 });
 
