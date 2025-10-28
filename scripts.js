@@ -1,4 +1,9 @@
-let todoList = [];
+"use strict";
+let todoList = window.localStorage.getItem("todos")
+  ? JSON.parse(window.localStorage.getItem("todos"))
+  : [];
+
+let todoListFiltered = [];
 
 let initList = function () {
   let req = new XMLHttpRequest();
@@ -7,6 +12,7 @@ let initList = function () {
     if (req.readyState == XMLHttpRequest.DONE) {
       todoList = JSON.parse(req.responseText).record;
       updateTodoList();
+    } else {
     }
   };
 
@@ -19,40 +25,94 @@ let initList = function () {
 };
 
 let updateTodoList = function () {
-  let todoListDiv = document.getElementById("todoListView");
-  if (todoListDiv != null) {
-    while (todoListDiv.firstChild) {
-      todoListDiv.removeChild(todoListDiv.firstChild);
+  let todoListView = document.getElementById("todoListView");
+
+  todoListView = todoListView.lastElementChild;
+
+  if (todoListView != null) {
+    while (todoListView.firstChild) {
+      todoListView.removeChild(todoListView.firstChild);
     }
   }
 
-  console.log(todoList);
+  let filterByDateBegin = document.getElementById("filterByDateBegin").value;
+  let filterByDateEnd = document.getElementById("filterByDateEnd").value;
 
-  let filterInput = document.getElementById("inputSearch");
+  if (filterByDateBegin !== "" && filterByDateEnd !== "") {
+    filterByDateBegin = new Date(filterByDateBegin);
+    filterByDateEnd = new Date(filterByDateEnd);
+    todoListFiltered = todoList.filter(data => {
+      let tempDataDueDate = new Date(data.dueDate);
+      console.log(filterByDateBegin, filterByDateEnd, tempDataDueDate);
+      if (
+        tempDataDueDate > filterByDateBegin &&
+        tempDataDueDate < filterByDateEnd
+      ) {
+        return data;
+      }
+    });
+    console.log(todoListFiltered);
+  } else {
+    todoListFiltered = todoList;
+  }
+
+  let filterInput = document.getElementById("inputSearch").value;
   if (filterInput != null) {
-    for (let todo in todoList) {
-      if (todoList[todo].title && todoList[todo].description)
-        if (
-          todoList[todo].title
-            .toLowerCase()
-            .includes(filterInput.value.toLowerCase()) ||
-          todoList[todo].description
-            .toLowerCase()
-            .includes(filterInput.value.toLowerCase())
-        ) {
-          let newElement = document.createElement("p");
-          let newContent = document.createTextNode(
-            todoList[todo].title + " " + todoList[todo].description
-          );
-          newElement.appendChild(newContent);
-          todoListDiv.appendChild(newElement);
-        }
+    for (let todo in todoListFiltered) {
+      if (
+        todoListFiltered[todo].title
+          .toLowerCase()
+          .includes(filterInput.toLowerCase()) ||
+        todoListFiltered[todo].description
+          .toLowerCase()
+          .includes(filterInput.toLowerCase())
+      ) {
+        let deleteButton = document.createElement("button");
+        deleteButton.appendChild(document.createTextNode("Delete"));
+        deleteButton.addEventListener("click", () => {
+          deleteTodo(todo);
+        });
+
+        let todoRow = document.createElement("tr");
+        let deleteCell = document.createElement("td");
+        deleteCell.appendChild(deleteButton);
+        let titleCell = document.createElement("td");
+        titleCell.appendChild(
+          document.createTextNode(todoListFiltered[todo].title)
+        );
+        let descCell = document.createElement("td");
+        descCell.appendChild(
+          document.createTextNode(todoListFiltered[todo].description)
+        );
+        let placeCell = document.createElement("td");
+        placeCell.appendChild(
+          document.createTextNode(todoListFiltered[todo].place)
+        );
+        let dateCell = document.createElement("td");
+        dateCell.appendChild(
+          document.createTextNode(
+            todoListFiltered[todo].dueDate
+              ? new Date(todoListFiltered[todo].dueDate).toLocaleDateString()
+              : ""
+          )
+        );
+
+        todoRow.appendChild(deleteCell);
+        todoRow.appendChild(titleCell);
+        todoRow.appendChild(descCell);
+        todoRow.appendChild(placeCell);
+        todoRow.appendChild(dateCell);
+
+        todoListView.appendChild(todoRow);
+      }
     }
   }
 };
 
 let deleteTodo = function (index) {
   todoList.splice(index, 1);
+  updateJSONbin();
+  updateTodoList();
 };
 
 let addTodo = function () {
@@ -98,10 +158,17 @@ let updateJSONbin = function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   initList();
-});
+  const inputSearch = document.getElementById("inputSearch");
+  if (inputSearch != null) {
+    inputSearch.addEventListener("input", updateTodoList);
+    inputSearch.addEventListener("change", updateTodoList);
+  }
 
-let inputSearch = document.getElementById("inputSearch");
-if (inputSearch != null) {
-  inputSearch.addEventListener("input", updateTodoList);
-  inputSearch.addEventListener("change", updateTodoList);
-}
+  const filterByDateBegin = document.getElementById("filterByDateBegin");
+  const filterByDateEnd = document.getElementById("filterByDateEnd");
+
+  if (filterByDateBegin != null && filterByDateEnd != null) {
+    filterByDateBegin.addEventListener("input", updateTodoList);
+    filterByDateEnd.addEventListener("input", updateTodoList);
+  }
+});

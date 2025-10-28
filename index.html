@@ -7,7 +7,18 @@
   </head>
   <body>
     <h1>MyNotes</h1>
-    <div id="todoListView"></div>
+    <table id="todoListView">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Place</th>
+          <th>Due date</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 
     <form>
       <label>Title</label>
@@ -29,6 +40,8 @@
         placeholder="Type Your seach here..."
         onchange="updateTodoList()"
       />
+      <input type="date" name="filterByDateBegin" id="filterByDateBegin" />
+      <input type="date" name="filterByDateEnd" id="filterByDateEnd" />
     </div>
   </body>
 </html>
