@@ -68,6 +68,7 @@ let updateTodoList = function () {
           .includes(filterInput.toLowerCase())
       ) {
         let deleteButton = document.createElement("button");
+        deleteButton.className = "btn btn-delete w-100";
         deleteButton.appendChild(document.createTextNode("Delete"));
         deleteButton.addEventListener("click", () => {
           deleteTodo(todo);

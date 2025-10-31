@@ -1,0 +1,42 @@
+body {
+    background-image: url("background.png");
+    background-size: cover;           
+    background-position: center;      
+    background-repeat: no-repeat;     
+    background-attachment: fixed; 
+}
+
+h1 {
+  font-weight: 600;
+  color: #132440
+}
+
+section {
+    background-color: #CBCBCB;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #CBCBCB;
+}
+
+button.btn-primary {
+  background-color: #132440;
+  border-color: #132440;
+}
+
+button.btn-primary:hover {
+  background-color: #0F1D33;
+  border-color: #0F1D33;
+}
+
+button.btn-delete {
+  background-color: #D72631;
+  border-color: #D72631;
+  color: white;
+}
+
+button.btn-delete:hover {
+  background-color: #BF092F;
+  border-color: #BF092F;
+  color: white;
+}
+
