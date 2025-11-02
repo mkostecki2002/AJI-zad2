@@ -1,9 +1,47 @@
-"use strict";
+("use strict");
 let todoList = window.localStorage.getItem("todos")
   ? JSON.parse(window.localStorage.getItem("todos"))
   : [];
 
 let todoListFiltered = [];
+
+const getCategoryFromGroq = async (title, description) => {
+  const response = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer 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",
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-oss-20b",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a classifier. You only have to return the name of category from provided list. List of categories is [personal, study, lifestyle, sport, job]. User will give you a title and description of task.",
+          },
+          {
+            role: "user",
+            content: "Title: Learn Python Description: Create app.",
+          },
+          {
+            role: "assistant",
+            content: "study",
+          },
+          {
+            role: "user",
+            content: `Title: ${title} \nDescription: ${description}`,
+          },
+        ],
+      }),
+    }
+  );
+  const data = await response.json();
+  return data.choices[0].message.content.trim();
+};
 
 let initList = function () {
   let req = new XMLHttpRequest();
@@ -117,26 +155,25 @@ let deleteTodo = function (index) {
 };
 
 let addTodo = function () {
-  //get the elements in the form
   let newTitle = document.getElementById("inputTitle").value;
   let newDescription = document.getElementById("inputDescription").value;
   let newPlace = document.getElementById("inputPlace").value;
   let newDate = new Date(document.getElementById("inputDate").value);
 
-  //create new item
-  let newTodo = {
-    title: newTitle,
-    description: newDescription,
-    place: newPlace,
-    category: "",
-    dueDate: newDate,
-  };
-  //add item to the list
-  todoList.push(newTodo);
-  updateJSONbin();
-  updateTodoList();
-  //store the updated list in local storage
-  window.localStorage.setItem("todos", JSON.stringify(todoList));
+  getCategoryFromGroq(newTitle, newDescription).then(newCategory => {
+    let newTodo = {
+      title: newTitle,
+      description: newDescription,
+      place: newPlace,
+      category: newCategory,
+      dueDate: newDate,
+    };
+
+    todoList.push(newTodo);
+    updateJSONbin();
+    updateTodoList();
+    window.localStorage.setItem("todos", JSON.stringify(todoList));
+  });
 };
 
 let updateJSONbin = function () {
