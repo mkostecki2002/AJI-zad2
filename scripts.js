@@ -25,7 +25,7 @@ const getCategoryFromGroq = async (title, description) => {
           },
           {
             role: "user",
-            content: "Title: Learn Python Description: Create app.",
+            content: "Title: Learn Python \nDescription: Create app.",
           },
           {
             role: "assistant",
@@ -43,14 +43,13 @@ const getCategoryFromGroq = async (title, description) => {
   return data.choices[0].message.content.trim();
 };
 
-let initList = function () {
-  let req = new XMLHttpRequest();
+const initList = () => {
+  const req = new XMLHttpRequest();
 
   req.onreadystatechange = () => {
     if (req.readyState == XMLHttpRequest.DONE) {
       todoList = JSON.parse(req.responseText).record;
       updateTodoList();
-    } else {
     }
   };
 
@@ -62,7 +61,7 @@ let initList = function () {
   req.send();
 };
 
-let updateTodoList = function () {
+const updateTodoList = () => {
   let todoListView = document.getElementById("todoListView");
 
   todoListView = todoListView.lastElementChild;
@@ -76,15 +75,22 @@ let updateTodoList = function () {
   let filterByDateBegin = document.getElementById("filterByDateBegin").value;
   let filterByDateEnd = document.getElementById("filterByDateEnd").value;
 
-  if (filterByDateBegin !== "" && filterByDateEnd !== "") {
-    filterByDateBegin = new Date(filterByDateBegin);
-    filterByDateEnd = new Date(filterByDateEnd);
+  if (filterByDateBegin !== "" || filterByDateEnd !== "") {
+    if (filterByDateBegin !== "")
+      filterByDateBegin = new Date(filterByDateBegin);
+    if (filterByDateEnd !== "") filterByDateEnd = new Date(filterByDateEnd);
+
     todoListFiltered = todoList.filter(data => {
-      let tempDataDueDate = new Date(data.dueDate);
-      console.log(filterByDateBegin, filterByDateEnd, tempDataDueDate);
+      const tempDataDueDate = new Date(data.dueDate);
+      if (tempDataDueDate > filterByDateBegin && filterByDateEnd === "") {
+        return data;
+      }
+      if (tempDataDueDate < filterByDateEnd && filterByDateBegin === "") {
+        return data;
+      }
       if (
-        tempDataDueDate > filterByDateBegin &&
-        tempDataDueDate < filterByDateEnd
+        tempDataDueDate < filterByDateEnd &&
+        tempDataDueDate > filterByDateBegin
       ) {
         return data;
       }
@@ -94,7 +100,7 @@ let updateTodoList = function () {
     todoListFiltered = todoList;
   }
 
-  let filterInput = document.getElementById("inputSearch").value;
+  const filterInput = document.getElementById("inputSearch").value;
   if (filterInput != null) {
     for (let todo in todoListFiltered) {
       if (
@@ -105,29 +111,33 @@ let updateTodoList = function () {
           .toLowerCase()
           .includes(filterInput.toLowerCase())
       ) {
-        let deleteButton = document.createElement("button");
+        const deleteButton = document.createElement("button");
         deleteButton.className = "btn btn-delete w-100";
         deleteButton.appendChild(document.createTextNode("Delete"));
         deleteButton.addEventListener("click", () => {
           deleteTodo(todo);
         });
 
-        let todoRow = document.createElement("tr");
-        let deleteCell = document.createElement("td");
+        const todoRow = document.createElement("tr");
+        const deleteCell = document.createElement("td");
         deleteCell.appendChild(deleteButton);
-        let titleCell = document.createElement("td");
+        const titleCell = document.createElement("td");
         titleCell.appendChild(
           document.createTextNode(todoListFiltered[todo].title)
         );
-        let descCell = document.createElement("td");
+        const descCell = document.createElement("td");
         descCell.appendChild(
           document.createTextNode(todoListFiltered[todo].description)
         );
-        let placeCell = document.createElement("td");
+        const placeCell = document.createElement("td");
         placeCell.appendChild(
           document.createTextNode(todoListFiltered[todo].place)
         );
-        let dateCell = document.createElement("td");
+        const categoryCell = document.createElement("td");
+        categoryCell.appendChild(
+          document.createTextNode(todoListFiltered[todo].category)
+        );
+        const dateCell = document.createElement("td");
         dateCell.appendChild(
           document.createTextNode(
             todoListFiltered[todo].dueDate
@@ -140,6 +150,7 @@ let updateTodoList = function () {
         todoRow.appendChild(titleCell);
         todoRow.appendChild(descCell);
         todoRow.appendChild(placeCell);
+        todoRow.appendChild(categoryCell);
         todoRow.appendChild(dateCell);
 
         todoListView.appendChild(todoRow);
@@ -148,20 +159,20 @@ let updateTodoList = function () {
   }
 };
 
-let deleteTodo = function (index) {
+const deleteTodo = index => {
   todoList.splice(index, 1);
   updateJSONbin();
   updateTodoList();
 };
 
-let addTodo = function () {
-  let newTitle = document.getElementById("inputTitle").value;
-  let newDescription = document.getElementById("inputDescription").value;
-  let newPlace = document.getElementById("inputPlace").value;
-  let newDate = new Date(document.getElementById("inputDate").value);
+const addTodo = () => {
+  const newTitle = document.getElementById("inputTitle").value;
+  const newDescription = document.getElementById("inputDescription").value;
+  const newPlace = document.getElementById("inputPlace").value;
+  const newDate = new Date(document.getElementById("inputDate").value);
 
   getCategoryFromGroq(newTitle, newDescription).then(newCategory => {
-    let newTodo = {
+    const newTodo = {
       title: newTitle,
       description: newDescription,
       place: newPlace,
@@ -176,12 +187,14 @@ let addTodo = function () {
   });
 };
 
-let updateJSONbin = function () {
-  let req = new XMLHttpRequest();
+const updateJSONbin = () => {
+  const req = new XMLHttpRequest();
 
   req.onreadystatechange = () => {
     if (req.readyState == XMLHttpRequest.DONE) {
-      console.log(req.responseText);
+      const records = JSON.parse(req.responseText).record;
+      todoList = records;
+      console.log(records);
     }
   };
 
