@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl">
   <head>
-    <link rel="stylesheet" href="Bootstrap.css" />
-    <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="Bootstrap.css">
+    <link rel="stylesheet" href="theme.css">
     <script src="scripts.js"></script>
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <title>MyTODO App</title>
   </head>
 
@@ -15,72 +15,75 @@
       </header>
 
       <section class="action p-3 mb-3 rounded shadow-sm">
-        <form class="row g-2">
-          <div class="col-sm-6 col-md-3">
-            <label for="inputTitle" class="form-label">Title</label>
-            <input type="text" id="inputTitle" class="form-control" />
-          </div>
-          <div class="col-sm-6 col-md-3">
-            <label for="inputDescription" class="form-label">Description</label>
-            <input type="text" id="inputDescription" class="form-control" />
-          </div>
-          <div class="col-sm-6 col-md-3">
-            <label for="inputPlace" class="form-label">Place</label>
-            <input type="text" id="inputPlace" class="form-control" />
-          </div>
-          <div class="col-sm-6 col-md-2">
-            <label for="inputDate" class="form-label">Due date</label>
-            <input type="date" id="inputDate" class="form-control" />
-          </div>
-          <div class="col-12 col-md-1 d-flex align-items-end">
-            <button
-              type="button"
-              class="btn btn-primary w-100"
-              onclick="addTodo()"
-            >
-              Add
-            </button>
-          </div>
-        </form>
+        <h2 class="visually-hidden">Add task</h2>
+          <form class="row g-2">
+            <div class="col-sm-6 col-md-3">
+              <label for="inputTitle" class="form-label">Title</label>
+              <input type="text" id="inputTitle" class="form-control">
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <label for="inputDescription" class="form-label">Description</label>
+              <input type="text" id="inputDescription" class="form-control">
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <label for="inputPlace" class="form-label">Place</label>
+              <input type="text" id="inputPlace" class="form-control">
+            </div>
+            <div class="col-sm-6 col-md-2">
+              <label for="inputDate" class="form-label">Due date</label>
+              <input type="date" id="inputDate" class="form-control">
+            </div>
+            <div class="col-12 col-md-1 d-flex align-items-end">
+              <button
+                type="button"
+                class="btn btn-primary w-100"
+                onclick="addTodo()"
+              >
+                Add
+              </button>
+            </div>
+          </form>
       </section>
 
       <section class="search p-3 mb-3 rounded shadow-sm">
-        <div class="row g-2 align-items-end">
-          <div class="col-md-6">
-            <label for="inputSearch" class="form-label">Search</label>
-            <input
-              type="text"
-              id="inputSearch"
-              class="form-control"
-              placeholder="Type your search..."
-              onchange="updateTodoList()"
-            />
+        <h2 class="visually-hidden">Search & filters</h2>
+          <div class="row g-2 align-items-end">
+            <div class="col-md-6">
+              <label for="inputSearch" class="form-label">Search</label>
+              <input
+                type="text"
+                id="inputSearch"
+                class="form-control"
+                placeholder="Type your search..."
+                onchange="updateTodoList()"
+              >
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <label for="filterByDateBegin" class="form-label">From</label>
+              <input type="date" id="filterByDateBegin" class="form-control">
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <label for="filterByDateEnd" class="form-label">To</label>
+              <input type="date" id="filterByDateEnd" class="form-control">
+            </div>
           </div>
-          <div class="col-sm-6 col-md-3">
-            <label for="filterByDateBegin" class="form-label">From</label>
-            <input type="date" id="filterByDateBegin" class="form-control" />
-          </div>
-          <div class="col-sm-6 col-md-3">
-            <label for="filterByDateEnd" class="form-label">To</label>
-            <input type="date" id="filterByDateEnd" class="form-control" />
-          </div>
-        </div>
       </section>
 
       <section class="activities p-3 rounded shadow-sm">
-        <table id="todoListView" class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th style="width: 1%"></th>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Place</th>
-              <th>Category</th>
-              <th>Due date</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <h2 class="visually-hidden">Tasks list</h2>
+          <table id="todoListView" class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 1%"></th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Place</th>
+                <th>Category</th>
+                <th>Due date</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
       </section>
     </div>
   </body>
